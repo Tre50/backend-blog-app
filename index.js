@@ -3,17 +3,17 @@ import cors from 'cors'
 import { MongoClient } from 'mongodb'
 import 'dotenv/config'
 
+const app = express()
+app.use(cors())
+app.use(express.json())
+
+
 const client = new MongoClient(process.env.MONGO_URI)
 const db = client.db('blogapp-c12')
 const blogPosts = db.collection('blog-posts')
 
 client.connect()
 console.log('Connected to Mongo')
-
-const app = express()
-app.use(cors())
-app.use(express.json())
-
 
 
 app.get('/', async (req, res) => {
@@ -23,11 +23,10 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/', async (req, res) => {
-    console.log('req.body ->', req.body)
     const newBlogPost = { title: req.body.title, content: req.body.content }
-    const addedItem = await blogPosts.insertOne(newBlogPost)
-    console.log('addedItem->', addedItem)
-    res.send(addedItem)
+    await blogPosts.insertOne(newBlogPost)
+    const allPosts = await blogPosts.find().toArray()
+    res.send(allPosts)
 
 
 
