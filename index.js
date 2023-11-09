@@ -33,3 +33,7 @@ app.post('/', async (req, res) => {
 })
 
 app.listen('8080', () => console.log('Api listening on port 8080'))
+
+//Get the following working on backend and frontend
+//Signup -> adding user to the database
+//Login -> confirming the user is in database
