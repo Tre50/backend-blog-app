@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-import { MongoClient } from 'mongodb'
+import { MongoClient, ObjectId } from 'mongodb'
 import 'dotenv/config'
 
 const app = express()
@@ -30,18 +30,31 @@ app.post('/', async (req, res) => {
 })
 
 app.post('/signup', async (req, res) => {
-    const userAdded = await userDb.insertOne({ email: req.body.email, password: req.body.password })
-    res.send(userAdded)
-
+	const userAdded = await usersDb.insertOne({ email: req.body.email, password: req.body.password })
+	console.log('user added -> ', userAdded)
+	res.send(userAdded)
 })
+
 
 app.post('/login',async (req, res) => {
     console.log(req.body)
-    
+    const userFound = await userDb.findOne({email:req.body.email, password: req.body.password })
+    res.send(userFound)
 })
 
-app.listen('8080', () => console.log('Api listening on port 8080'))
+    
+    app.delete('/:_id', async (req, res) => {
+        console.log(req.params)
 
-//Get the following working on backend and frontend
-//Signup -> adding user to the database
-//Login -> confirming the user is in database
+        const _id = new ObjectId(req.query._id)
+        
+        const itemDeleted = await blogPosts.findOneAndDelete({_id: _id})
+        res.send(itemDeleted)
+})
+
+
+
+
+
+app.listen(process.env.PORT || 8080, () => console.log('Api listening on port 8080'))
+
